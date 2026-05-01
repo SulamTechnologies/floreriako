@@ -38,10 +38,10 @@ export function Navbar() {
     <>
       <motion.header
         className={cn(
-          "fixed top-0 inset-x-0 z-50 transition-all duration-300",
+          "fixed top-0 inset-x-0 z-50 transition-all duration-300 border-b",
           scrolled
-            ? "bg-white/90 backdrop-blur-md border-b border-gray-100/80 shadow-sm"
-            : "bg-transparent",
+            ? "bg-white/90 backdrop-blur-md border-gray-100/80 shadow-sm"
+            : "bg-transparent border-transparent shadow-none",
         )}
         initial={{ y: -80 }}
         animate={{ y: 0 }}
