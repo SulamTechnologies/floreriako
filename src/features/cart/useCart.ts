@@ -3,17 +3,23 @@ import { useCartStore } from "@/store/cart";
 import { useServerCart, useAddToCart, useUpdateCartItem, useRemoveCartItem } from "./api";
 import type { CartItemDTO } from "@/types/api";
 
+export interface AddItemPayload {
+  product_id: string;
+  product_name: string;
+  product_image_url: string | null;
+  unit_price_cents: number;
+  quantity?: number;
+}
+
 export interface UseCartReturn {
   items: CartItemDTO[];
   total_cents: number;
   item_count: number;
   isLoading: boolean;
-  addItem: (payload: {
-    product_id: string;
-    product_name: string;
-    product_image_url: string | null;
-    unit_price_cents: number;
-  }) => void;
+  addItem: (
+    payload: AddItemPayload,
+    callbacks?: { onSuccess?: () => void; onError?: (err: unknown) => void },
+  ) => void;
   updateQuantity: (idOrProductId: string, quantity: number) => void;
   removeItem: (idOrProductId: string) => void;
 }
@@ -43,8 +49,11 @@ export function useCart(): UseCartReturn {
       total_cents: serverCart?.total_cents ?? 0,
       item_count: serverCart?.item_count ?? 0,
       isLoading,
-      addItem: (payload) => {
-        addToCart.mutate({ product_id: payload.product_id, quantity: 1 });
+      addItem: (payload, callbacks) => {
+        addToCart.mutate(
+          { product_id: payload.product_id, quantity: payload.quantity ?? 1 },
+          { onSuccess: callbacks?.onSuccess, onError: callbacks?.onError },
+        );
       },
       updateQuantity: (id, quantity) => {
         updateItem.mutate({ id, quantity });
@@ -71,7 +80,10 @@ export function useCart(): UseCartReturn {
     total_cents: guestTotal,
     item_count: guestCount,
     isLoading: false,
-    addItem: (payload) => guestAdd(payload),
+    addItem: (payload, callbacks) => {
+      guestAdd(payload, payload.quantity ?? 1);
+      callbacks?.onSuccess?.();
+    },
     updateQuantity: (productId, quantity) => guestUpdate(productId, quantity),
     removeItem: (productId) => guestRemove(productId),
   };

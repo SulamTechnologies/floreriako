@@ -43,7 +43,13 @@ async function handleResponse<T>(res: Response): Promise<T> {
   );
 }
 
-async function request<T>(method: string, path: string, body?: unknown, retry = true): Promise<T> {
+async function request<T>(
+  method: string,
+  path: string,
+  body?: unknown,
+  retry = true,
+  signal?: AbortSignal,
+): Promise<T> {
   const authHeader = await getAuthHeader();
 
   const res = await fetch(`${API_URL}${path}`, {
@@ -53,17 +59,18 @@ async function request<T>(method: string, path: string, body?: unknown, retry = 
       ...authHeader,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
+    signal,
   });
 
   if (res.status === 401 && retry) {
-    return refreshAndRetry(() => request<T>(method, path, body, false));
+    return refreshAndRetry(() => request<T>(method, path, body, false, signal));
   }
 
   return handleResponse<T>(res);
 }
 
 export const api = {
-  get: <T>(path: string) => request<T>("GET", path),
+  get: <T>(path: string, signal?: AbortSignal) => request<T>("GET", path, undefined, true, signal),
   post: <T>(path: string, body: unknown) => request<T>("POST", path, body),
   put: <T>(path: string, body: unknown) => request<T>("PUT", path, body),
   patch: <T>(path: string, body: unknown) => request<T>("PATCH", path, body),

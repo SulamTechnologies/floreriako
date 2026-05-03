@@ -69,12 +69,12 @@ export default function CartPage() {
           </div>
 
           {user ? (
-            <button
-              disabled
-              className="w-full rounded-xl bg-green-700 px-6 py-3 text-base font-semibold text-white hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            <Link
+              to="/checkout"
+              className="block w-full rounded-xl bg-brand-600 px-6 py-3 text-base font-semibold text-white text-center hover:bg-brand-700 transition-colors"
             >
-              Proceder al pago — próximamente
-            </button>
+              Confirmar pedido
+            </Link>
           ) : (
             <div className="space-y-3">
               <Link

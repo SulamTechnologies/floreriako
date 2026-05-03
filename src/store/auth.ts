@@ -6,8 +6,13 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string) => Promise<void>;
+  signIn: (email: string, password: string, captchaToken?: string) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    captchaToken?: string,
+  ) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   initialize: () => () => void;
@@ -18,16 +23,20 @@ export const useAuthStore = create<AuthState>()((set) => ({
   session: null,
   isLoading: true,
 
-  signIn: async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  signIn: async (email, password, captchaToken) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+      options: captchaToken ? { captchaToken } : undefined,
+    });
     if (error) throw error;
   },
 
-  signUp: async (email, password, fullName) => {
+  signUp: async (email, password, fullName, captchaToken) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: { data: { full_name: fullName }, ...(captchaToken ? { captchaToken } : {}) },
     });
     if (error) throw error;
   },
@@ -42,6 +51,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
   signOut: async () => {
     await supabase.auth.signOut();
+    sessionStorage.removeItem("fko_cart_merged_uid");
     set({ user: null, session: null });
   },
 

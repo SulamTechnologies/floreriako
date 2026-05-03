@@ -161,12 +161,13 @@ export function CartDrawer() {
                 <p className="text-xs text-gray-400">Envío calculado al pagar</p>
 
                 {user ? (
-                  <button
-                    disabled
-                    className="w-full flex items-center justify-center gap-2 bg-brand-600 text-white rounded-xl py-3 text-sm font-semibold opacity-60 cursor-not-allowed"
+                  <Link
+                    to="/checkout"
+                    onClick={closeCart}
+                    className="flex items-center justify-center gap-2 w-full bg-brand-600 hover:bg-brand-700 text-white rounded-xl py-3 text-sm font-semibold transition-colors"
                   >
-                    Pagar — próximamente <ArrowRight className="w-4 h-4" />
-                  </button>
+                    Confirmar pedido <ArrowRight className="w-4 h-4" />
+                  </Link>
                 ) : (
                   <Link
                     to="/login"

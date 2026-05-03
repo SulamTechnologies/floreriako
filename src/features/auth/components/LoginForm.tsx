@@ -1,4 +1,5 @@
 import { useState } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -6,10 +7,14 @@ import { useAuthStore } from "@/store/auth";
 import { loginSchema, type LoginInput } from "../schemas";
 import { GoogleButton } from "./GoogleButton";
 
+const SITEKEY = import.meta.env["VITE_HCAPTCHA_SITEKEY"] as string;
+
 export function LoginForm() {
   const signIn = useAuthStore((s) => s.signIn);
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const {
     register,
@@ -19,14 +24,20 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginInput) {
     setServerError(null);
+    if (!captchaToken) {
+      setServerError("Completa el captcha");
+      return;
+    }
     try {
-      await signIn(data.email, data.password);
+      await signIn(data.email, data.password, captchaToken);
       navigate("/");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error al iniciar sesión";
       setServerError(
         msg.includes("Invalid login credentials") ? "Email o contraseña incorrectos" : msg,
       );
+      setCaptchaKey((k) => k + 1);
+      setCaptchaToken(null);
     }
   }
 
@@ -75,9 +86,16 @@ export function LoginForm() {
           )}
         </div>
 
+        <HCaptcha
+          key={captchaKey}
+          sitekey={SITEKEY}
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken(null)}
+        />
+
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !captchaToken}
           className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60 transition-colors"
         >
           {isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"}

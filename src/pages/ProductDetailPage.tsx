@@ -19,18 +19,28 @@ export default function ProductDetailPage() {
 
   function handleAddToCart() {
     if (!product) return;
-    for (let i = 0; i < quantity; i++) {
-      addItem({
+    addItem(
+      {
         product_id: product.id,
         product_name: product.name,
         product_image_url: product.image_url ?? null,
         unit_price_cents: product.price_cents,
-      });
-    }
-    toast.success(`${product.name} agregado`, {
-      description: `${quantity} ${quantity === 1 ? "unidad" : "unidades"} · ${formatPrice(product.price_cents * quantity)}`,
-      action: { label: "Ver carrito", onClick: openCart },
-    });
+        quantity,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`${product.name} agregado`, {
+            description: `${quantity} ${quantity === 1 ? "unidad" : "unidades"} · ${formatPrice(product.price_cents * quantity)}`,
+            action: { label: "Ver carrito", onClick: openCart },
+          });
+        },
+        onError: () => {
+          toast.error("No se pudo agregar al carrito", {
+            description: "Intenta de nuevo",
+          });
+        },
+      },
+    );
   }
 
   if (isLoading) {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
@@ -7,11 +8,15 @@ import { useAuthStore } from "@/store/auth";
 import { registerSchema, type RegisterInput } from "../schemas";
 import { GoogleButton } from "./GoogleButton";
 
+const SITEKEY = import.meta.env["VITE_HCAPTCHA_SITEKEY"] as string;
+
 export function RegisterForm() {
   const signUp = useAuthStore((s) => s.signUp);
   const navigate = useNavigate();
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaKey, setCaptchaKey] = useState(0);
 
   const {
     register,
@@ -21,13 +26,19 @@ export function RegisterForm() {
 
   async function onSubmit(data: RegisterInput) {
     setServerError(null);
+    if (!captchaToken) {
+      setServerError("Completa el captcha");
+      return;
+    }
     try {
-      await signUp(data.email, data.password, data.full_name);
+      await signUp(data.email, data.password, data.full_name, captchaToken);
       setSuccess(true);
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Error al registrarse";
       setServerError(msg.includes("already registered") ? "Este email ya está registrado" : msg);
+      setCaptchaKey((k) => k + 1);
+      setCaptchaToken(null);
     }
   }
 
@@ -118,9 +129,16 @@ export function RegisterForm() {
           )}
         </div>
 
+        <HCaptcha
+          key={captchaKey}
+          sitekey={SITEKEY}
+          onVerify={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken(null)}
+        />
+
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !captchaToken}
           className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60 transition-colors"
         >
           {isSubmitting ? "Creando cuenta..." : "Crear cuenta"}

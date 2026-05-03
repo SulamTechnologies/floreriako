@@ -18,17 +18,29 @@ export function ProductCard({ product, index = 0 }: Props) {
 
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
-    addItem({
-      product_id: product.id,
-      product_name: product.name,
-      product_image_url: product.image_url ?? null,
-      unit_price_cents: product.price_cents,
-    });
-    toast.success(`${product.name} agregado`, {
-      description: formatPrice(product.price_cents),
-      action: { label: "Ver carrito", onClick: openCart },
-      duration: 3000,
-    });
+    addItem(
+      {
+        product_id: product.id,
+        product_name: product.name,
+        product_image_url: product.image_url ?? null,
+        unit_price_cents: product.price_cents,
+      },
+      {
+        onSuccess: () => {
+          toast.success(`${product.name} agregado`, {
+            description: formatPrice(product.price_cents),
+            action: { label: "Ver carrito", onClick: openCart },
+            duration: 3000,
+          });
+        },
+        onError: () => {
+          toast.error(`No se pudo agregar ${product.name}`, {
+            description: "Intenta de nuevo",
+            duration: 3000,
+          });
+        },
+      },
+    );
   }
 
   return (

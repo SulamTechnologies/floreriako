@@ -43,7 +43,14 @@ export interface OrderItemDTO {
   product_id: string;
   quantity: number;
   unit_price_cents: number;
-  product_snapshot: Record<string, unknown>;
+  product_snapshot: {
+    id: string;
+    name: string;
+    slug: string;
+    price_cents: number;
+    currency: string;
+    image_url: string | null;
+  };
 }
 
 export interface OrderDTO {
@@ -53,6 +60,22 @@ export interface OrderDTO {
   currency: string;
   items: OrderItemDTO[];
   created_at: string;
+}
+
+export interface ProfileDTO {
+  id: string;
+  full_name: string | null;
+  role: "customer" | "admin";
+  email: string;
+}
+
+export interface AdminOrderDTO extends OrderDTO {
+  user_email?: string;
+}
+
+export interface AdminProductDTO extends ProductDTO {
+  active: boolean;
+  categories: CategoryDTO[];
 }
 
 export interface CheckoutResponseDTO {
