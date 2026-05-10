@@ -60,7 +60,7 @@ export default function HomePage() {
             <motion.div variants={fadeUp}>
               <span className="inline-flex items-center gap-2 text-xs font-semibold text-brand-700 bg-brand-50 border border-brand-200 px-3 py-1.5 rounded-full mb-6">
                 <Flower2 className="w-3.5 h-3.5" />
-                Flores frescas · Ciudad de México
+                Flores frescas · Los Mochis
               </span>
             </motion.div>
 

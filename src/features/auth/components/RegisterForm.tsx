@@ -9,6 +9,7 @@ import { registerSchema, type RegisterInput } from "../schemas";
 import { GoogleButton } from "./GoogleButton";
 
 const SITEKEY = import.meta.env["VITE_HCAPTCHA_SITEKEY"] as string;
+if (!SITEKEY) throw new Error("VITE_HCAPTCHA_SITEKEY not set");
 
 export function RegisterForm() {
   const signUp = useAuthStore((s) => s.signUp);
