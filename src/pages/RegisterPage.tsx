@@ -2,11 +2,18 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Flower2 } from "lucide-react";
 import { RegisterForm } from "@/features/auth/components/RegisterForm";
+import { Seo } from "@/shared/seo";
 
 export default function RegisterPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Left panel — decorative */}
+      <Seo
+        title="Crear cuenta"
+        description="Crea tu cuenta para guardar direcciones y seguir tus pedidos."
+        path="/registro"
+        noIndex
+      />
+      {/* Left panel, decorative */}
       <div className="hidden lg:flex flex-col items-center justify-center bg-gradient-to-br from-brand-600 to-brand-800 p-12 text-white relative overflow-hidden">
         {/* Abstract decorative circles */}
         <div className="absolute -top-20 -left-20 w-56 h-56 rounded-full bg-white/5" />
@@ -33,7 +40,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Right panel — form */}
+      {/* Right panel, form */}
       <div className="flex items-center justify-center px-4 py-12 bg-stone-50">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run prerender",
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit",
-    "prepare": "husky"
+    "typecheck": "tsc -b",
+    "prepare": "husky",
+    "prebuild": "node scripts/generate-seo.mjs",
+    "seo": "node scripts/generate-seo.mjs",
+    "prerender": "vite build --ssr src/prerender.tsx --outDir dist-ssr --logLevel warn && node scripts/prerender.mjs"
   },
   "dependencies": {
     "@hcaptcha/react-hcaptcha": "^2.0.2",

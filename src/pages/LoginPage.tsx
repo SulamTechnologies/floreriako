@@ -2,11 +2,18 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Flower2 } from "lucide-react";
 import { LoginForm } from "@/features/auth/components/LoginForm";
+import { Seo } from "@/shared/seo";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
-      {/* Left panel — decorative */}
+      <Seo
+        title="Iniciar sesión"
+        description="Accede a tu cuenta para ver tus pedidos y repetir una compra."
+        path="/login"
+        noIndex
+      />
+      {/* Left panel, decorative */}
       <div className="hidden lg:flex flex-col items-center justify-center bg-gradient-to-br from-brand-700 to-brand-900 p-12 text-white relative overflow-hidden">
         {/* Abstract decorative circles */}
         <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/5" />
@@ -23,7 +30,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right panel — form */}
+      {/* Right panel, form */}
       <div className="flex items-center justify-center px-4 py-12 bg-stone-50">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

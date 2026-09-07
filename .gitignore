@@ -44,3 +44,7 @@ coverage/
 *.pem
 *.key
 *.p12
+
+# ── SEO generado en build ──────────────────────────────────────────────────────
+public/sitemap.xml
+public/robots.txt
