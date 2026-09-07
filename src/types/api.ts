@@ -1,4 +1,4 @@
-// Shared DTOs — keep in sync with floreriakoAPI/src/types/api.ts
+// Shared DTOs, keep in sync with floreriakoAPI/src/types/api.ts
 
 export interface ProductDTO {
   id: string;

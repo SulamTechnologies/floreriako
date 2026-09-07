@@ -1,7 +1,34 @@
 import { supabase } from "@/shared/lib/supabase";
 import type { ApiErrorResponse } from "@/types/api";
 
-const API_URL = import.meta.env["VITE_API_URL"] as string;
+const SAFE_ERROR_MESSAGES: Record<number, string> = {
+  400: "Solicitud inválida.",
+  401: "No autorizado.",
+  403: "Sin permiso para realizar esta acción.",
+  404: "Recurso no encontrado.",
+  422: "Los datos enviados son inválidos.",
+  429: "Demasiadas solicitudes. Intenta más tarde.",
+  500: "Error interno del servidor.",
+};
+
+function sanitizeErrorMessage(message: string | undefined, status: number): string {
+  if (status >= 400 && status < 500 && status !== 401 && status !== 403) {
+    return message ?? SAFE_ERROR_MESSAGES[status] ?? "Error desconocido.";
+  }
+  return SAFE_ERROR_MESSAGES[status] ?? "Ocurrió un error. Intenta de nuevo.";
+}
+
+/**
+ * Base de la API.
+ *
+ * En desarrollo se deja vacía a propósito: las peticiones salen al mismo origen
+ * del dev server y `vite.config.ts` las reenvía a la API real. Así no hay CORS
+ * en local, sin importar el puerto que tome Vite, y no hace falta abrir la
+ * lista de orígenes permitidos de la API de producción.
+ *
+ * En build se usa la URL absoluta de `VITE_API_URL`.
+ */
+const API_URL = import.meta.env.DEV ? "" : (import.meta.env["VITE_API_URL"] as string);
 
 export class ApiClientError extends Error {
   readonly code: string;
@@ -37,7 +64,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
   const body = (await res.json().catch(() => null)) as ApiErrorResponse | null;
   throw new ApiClientError(
     body?.error.code ?? "UNKNOWN",
-    body?.error.message ?? "Error desconocido",
+    sanitizeErrorMessage(body?.error.message, res.status),
     res.status,
     body?.error.details,
   );

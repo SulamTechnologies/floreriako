@@ -64,7 +64,7 @@ export function useCart(): UseCartReturn {
     };
   }
 
-  // Guest mode — map local items to CartItemDTO shape
+  // Guest mode, map local items to CartItemDTO shape
   const guestDTOItems: CartItemDTO[] = guestItems.map((i) => ({
     id: i.product_id,
     product_id: i.product_id,

@@ -12,7 +12,7 @@ export function GoogleButton({ label = "Continuar con Google" }: { label?: strin
     setLoading(true);
     try {
       await signInWithGoogle();
-      // Browser redirects to Google — no further code runs here
+      // Browser redirects to Google, no further code runs here
     } catch {
       setError("No se pudo conectar con Google. Intenta de nuevo.");
       setLoading(false);

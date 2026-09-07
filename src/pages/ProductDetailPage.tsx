@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ShoppingBag, Minus, Plus, ImageOff, Package, Tag } from "lucide-react";
 import { toast } from "sonner";
@@ -8,6 +8,9 @@ import { formatPrice } from "@/shared/lib/format";
 import { useCart } from "@/features/cart/useCart";
 import { useUIStore } from "@/store/ui";
 import { cn } from "@/shared/lib/cn";
+import { JsonLd, Seo, breadcrumbSchema, productSchema } from "@/shared/seo";
+
+const VALID_SLUG = /^[a-z0-9-]{1,120}$/;
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -15,7 +18,10 @@ export default function ProductDetailPage() {
   const { openCart } = useUIStore();
   const [quantity, setQuantity] = useState(1);
 
-  const { data: product, isLoading, isError } = useProduct(slug ?? "");
+  const validSlug = slug && VALID_SLUG.test(slug) ? slug : "";
+  const { data: product, isLoading, isError } = useProduct(validSlug);
+
+  if (!validSlug) return <Navigate to="/productos" replace />;
 
   function handleAddToCart() {
     if (!product) return;
@@ -77,6 +83,26 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+      <Seo
+        title={product.name}
+        description={
+          product.description ??
+          `${product.name}, arreglo floral disponible con entrega el mismo día.`
+        }
+        path={`/productos/${product.slug}`}
+        image={product.image_url ?? undefined}
+        type="product"
+      />
+      <JsonLd
+        data={[
+          productSchema(product),
+          breadcrumbSchema([
+            { name: "Inicio", path: "/" },
+            { name: "Catálogo", path: "/productos" },
+            { name: product.name, path: `/productos/${product.slug}` },
+          ]),
+        ]}
+      />
       {/* Back */}
       <motion.div
         initial={{ opacity: 0, x: -10 }}

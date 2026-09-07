@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="blend" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fdfaf9" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#fdfaf9" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#fdfaf9" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="photoClip"><rect x="620" y="0" width="580" height="630"/></clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="#fdfaf9"/>
+
+  <g clip-path="url(#photoClip)">
+    <image x="560" y="-120" width="700" height="960"
+      xlink:href="PHOTO_PATH" preserveAspectRatio="xMidYMid slice"/>
+  </g>
+  <rect x="560" y="0" width="340" height="630" fill="url(#blend)"/>
+
+  <image x="96" y="86" width="104" height="106" xlink:href="LOGO_PATH"/>
+
+  <text x="220" y="132" font-family="DejaVu Serif, Georgia, serif" font-size="30" letter-spacing="5" fill="#1b1717">KRYSTAL OLIVAS</text>
+  <text x="222" y="166" font-family="DejaVu Sans, Helvetica, sans-serif" font-size="15" letter-spacing="4.4" fill="#6d5f5a">FLORES QUE DAN LUZ</text>
+
+  <text x="96" y="320" font-family="DejaVu Serif, Georgia, serif" font-size="66" font-weight="700" fill="#1b1717">Flores frescas</text>
+  <text x="96" y="398" font-family="DejaVu Serif, Georgia, serif" font-size="66" font-weight="700" fill="#9e2750">a domicilio</text>
+
+  <text x="96" y="456" font-family="DejaVu Sans, Helvetica, sans-serif" font-size="24" fill="#4d4340">Ramos y arreglos hechos a mano en Los Mochis</text>
+
+  <g transform="translate(96 496)">
+    <rect width="316" height="52" rx="26" fill="#9e2750"/>
+    <text x="30" y="34" font-family="DejaVu Sans, Helvetica, sans-serif" font-size="19" font-weight="700" fill="#ffffff">Pide por WhatsApp</text>
+  </g>
+</svg>

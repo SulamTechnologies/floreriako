@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Navbar } from "./Navbar";
+import { Topbar } from "./topbar";
+import { Footer } from "./footer/Footer";
+import { ScrollManager } from "./ScrollManager";
 import { CartDrawer } from "@/features/cart/components/CartDrawer";
 import { useCartSync } from "@/features/cart/useCartSync";
 
@@ -19,10 +21,11 @@ export function AppLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-surface">
       <CartSyncGate />
-      <Navbar />
-      <main className="flex-1">
+      <ScrollManager />
+      <Topbar />
+      <main id="contenido" className="flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location.pathname}
@@ -36,6 +39,7 @@ export function AppLayout() {
           </motion.div>
         </AnimatePresence>
       </main>
+      <Footer />
       <CartDrawer />
     </div>
   );
