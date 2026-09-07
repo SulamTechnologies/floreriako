@@ -17,7 +17,8 @@ export default function AdminLayout() {
   const location = useLocation();
 
   if (!user) return <Navigate to="/login" replace />;
-  if (!isLoading && profile?.role !== "admin") return <Navigate to="/" replace />;
+  if (isLoading) return null;
+  if (profile?.role !== "admin") return <Navigate to="/" replace />;
 
   async function handleSignOut() {
     await signOut();

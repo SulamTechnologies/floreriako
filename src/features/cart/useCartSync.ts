@@ -18,7 +18,7 @@ export function useCartSync() {
       return;
     }
 
-    // Already merged in this browser session for this user — skip
+    // Already merged in this browser session for this user, skip
     if (sessionStorage.getItem(SESSION_KEY) === user.id) return;
 
     if (guestItems.length > 0) {
@@ -34,7 +34,7 @@ export function useCartSync() {
         },
       );
     } else {
-      // No guest items — mark done so we don't check every re-render
+      // No guest items, mark done so we don't check every re-render
       sessionStorage.setItem(SESSION_KEY, user.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
