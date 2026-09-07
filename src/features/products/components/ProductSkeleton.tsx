@@ -1,12 +1,12 @@
 import { cn } from "@/shared/lib/cn";
 
 function Bone({ className }: { className?: string }) {
-  return <div className={cn("bg-gray-100 rounded-lg animate-pulse", className)} />;
+  return <div className={cn("animate-pulse rounded-lg bg-surface-sunken", className)} />;
 }
 
 export function ProductSkeleton() {
   return (
-    <div className="rounded-2xl bg-white border border-gray-100 overflow-hidden">
+    <div className="overflow-hidden rounded-card border border-line bg-surface-raised">
       <Bone className="aspect-[4/3] rounded-none" />
       <div className="p-4 space-y-3">
         <Bone className="h-4 w-3/4" />

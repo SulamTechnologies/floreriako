@@ -1,18 +1,21 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ShoppingBag, ImageOff } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import type { ProductWithCategoriesDTO } from "@/types/api";
 import { formatPrice } from "@/shared/lib/format";
 import { useCart } from "@/features/cart/useCart";
 import { useUIStore } from "@/store/ui";
+import { Media } from "@/shared/ui/primitives";
 
 interface Props {
   product: ProductWithCategoriesDTO;
   index?: number;
+  /** La primera fila de la rejilla no debe cargar en lazy */
+  priority?: boolean;
 }
 
-export function ProductCard({ product, index = 0 }: Props) {
+export function ProductCard({ product, index = 0, priority = false }: Props) {
   const { addItem } = useCart();
   const { openCart } = useUIStore();
 
@@ -43,72 +46,67 @@ export function ProductCard({ product, index = 0 }: Props) {
     );
   }
 
+  const outOfStock = product.stock === 0;
+
   return (
     <motion.article
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="group relative flex flex-col rounded-2xl bg-white border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/60 transition-all duration-300 hover:-translate-y-1"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.4, delay: Math.min(index, 7) * 0.05, ease: [0.16, 1, 0.3, 1] }}
+      className="group relative flex flex-col overflow-hidden rounded-card border border-line bg-surface-raised transition-all duration-300 hover:-translate-y-1 hover:border-line-brand hover:shadow-raised"
     >
-      <Link to={`/productos/${product.slug}`} className="flex flex-col flex-1">
-        {/* Image */}
-        <div className="relative aspect-[4/3] overflow-hidden bg-stone-50">
-          {product.image_url ? (
-            <img
-              src={product.image_url}
-              alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
-              style={{ transform: "scale(1)" }}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <ImageOff className="w-10 h-10 text-gray-200" />
-            </div>
-          )}
+      <Link to={`/productos/${product.slug}`} className="flex flex-1 flex-col">
+        <div className="relative">
+          <Media
+            src={product.image_url ?? undefined}
+            alt={product.name}
+            ratio="4/3"
+            seed={index}
+            priority={priority}
+            imgClassName="transition-transform duration-500 group-hover:scale-105"
+          />
 
-          {/* Category badge */}
-          {product.categories[0] && (
-            <span className="absolute top-3 left-3 text-xs font-medium bg-white/90 backdrop-blur-sm text-gray-700 px-2.5 py-1 rounded-full border border-white/50">
+          {product.categories[0] ? (
+            <span className="absolute left-3 top-3 rounded-pill border border-white/60 bg-white/90 px-2.5 py-1 text-xs font-medium text-ink-soft backdrop-blur-sm">
               {product.categories[0].name}
             </span>
-          )}
+          ) : null}
 
-          {/* Out of stock overlay */}
-          {product.stock === 0 && (
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
-              <span className="text-xs font-semibold text-gray-500 bg-white px-3 py-1 rounded-full border border-gray-200">
+          {outOfStock ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-surface/70 backdrop-blur-sm">
+              <span className="rounded-pill border border-line bg-surface-raised px-3 py-1 text-xs font-semibold text-ink-muted">
                 Sin stock
               </span>
             </div>
-          )}
+          ) : null}
         </div>
 
-        {/* Content */}
-        <div className="p-4 flex-1 flex flex-col">
-          <h3 className="font-semibold text-gray-900 leading-tight line-clamp-2 mb-auto">
+        <div className="flex flex-1 flex-col p-4">
+          <h3 className="mb-auto line-clamp-2 font-semibold leading-tight text-ink">
             {product.name}
           </h3>
-          <div className="mt-3 flex items-end justify-between">
-            <span className="text-lg font-bold text-brand-600">
+          <div className="mt-3 flex items-end justify-between gap-2">
+            <span className="tabular text-lg font-bold text-ink-brand">
               {formatPrice(product.price_cents)}
             </span>
-            {product.stock > 0 && product.stock <= 5 && (
-              <span className="text-xs text-amber-500 font-medium">Últimos {product.stock}</span>
-            )}
+            {product.stock > 0 && product.stock <= 5 ? (
+              <span className="text-xs font-medium text-danger-600">Últimos {product.stock}</span>
+            ) : null}
           </div>
         </div>
       </Link>
 
-      {/* Add to cart */}
       <div className="px-4 pb-4">
         <motion.button
+          type="button"
           onClick={handleAddToCart}
-          disabled={product.stock === 0}
+          disabled={outOfStock}
           whileTap={{ scale: 0.97 }}
-          className="w-full flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 disabled:bg-gray-100 disabled:text-gray-400 text-white disabled:cursor-not-allowed rounded-xl py-2.5 text-sm font-semibold transition-colors"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-700 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800 disabled:cursor-not-allowed disabled:bg-surface-sunken disabled:text-ink-muted"
         >
-          <ShoppingBag className="w-4 h-4" strokeWidth={1.5} />
-          {product.stock === 0 ? "Sin stock" : "Agregar"}
+          <ShoppingBag className="h-4 w-4" strokeWidth={1.75} />
+          {outOfStock ? "Sin stock" : "Agregar"}
         </motion.button>
       </div>
     </motion.article>
