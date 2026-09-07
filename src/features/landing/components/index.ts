@@ -1,0 +1,9 @@
+export { Hero } from "./Hero";
+export { CategoryShowcase } from "./CategoryShowcase";
+export { BestSellers } from "./BestSellers";
+export { HowItWorks } from "./HowItWorks";
+export { Occasions } from "./Occasions";
+export { Gallery } from "./Gallery";
+export { DeliveryZones } from "./DeliveryZones";
+export { Faq } from "./Faq";
+export { ContactCta } from "./ContactCta";
